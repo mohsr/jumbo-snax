@@ -3,8 +3,8 @@ Mohsin Rizvi
 
 Last edited: 10/17/17
 
-A program that lets you view the Tufts dining hall menus and search for
-your favorite foods!
+A command line tool that lets you view the Tufts dining hall menus
+and search for your favorite foods!
 
 ## Acknowledgments
 Thanks to [Derick Yang's Tufts dining data 
