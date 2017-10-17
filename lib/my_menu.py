@@ -2,7 +2,7 @@
 
 my_menu.py
 Mohsin Rizvi
-Last edited: 10/16/17
+Last edited: 10/17/17
 Defines the My_Menu class, the Day_Menu class, and the Setting class.
 
 """
