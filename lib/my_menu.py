@@ -2,14 +2,15 @@
 
 my_menu.py
 Mohsin Rizvi
-Last edited: 10/17/17
-Defines the My_Menu class, the Day_Menu class, and the Setting class.
+Last edited: 10/19/17
+Defines the My_Menu class.
 
 """
-import requests as req
 import datetime as time
 import sys
-import json
+
+import day_menu as day
+import setting
 
 # The My_Menu class is used to run the program.
 class My_Menu:
@@ -19,6 +20,7 @@ class My_Menu:
     # Return:     Void
     def __init__(self):
         # Get the current date and start the repl.
+        self.menu = None
         self.rn = time.datetime.now()
         self.repl()
 
@@ -49,6 +51,8 @@ class My_Menu:
                 self.print_favs()
             elif entered == "q":
                 self.quit()
+            elif entered == "":
+                continue
             else:
                 print("Invalid command :(")
                 continue
@@ -82,13 +86,16 @@ class My_Menu:
     # Parameters: A datetime instance to give the day to check for.
     # Return:     Void
     def search_day(self, date):
-        print("Retrieving data...")
         # Retrieve the data, get a setting, and print the menu.
         # TODO: This can be improved significantly by retrieving data after
         #       getting the dining halls to search.
-        menu = Day_Menu(date)
-        setting = self.get_hall_meal()
-        self.print_meal(menu, setting)
+        if self.menu == None:
+            print("Retrieving data...")
+            self.menu = day.Day_Menu(date)
+        meal_setting = self.get_hall_meal()
+        if meal_setting == None:
+            return
+        self.print_meal(self.menu, meal_setting)
 
     # Purpose:    Retrieve and print dining hall data for the next week.
     # Parameters: A datetime type to start printing the week from.
@@ -121,7 +128,7 @@ class My_Menu:
     # Return:     A Setting instance with a dining hall code "d", "c", or
     #             "b" for Dewick, Carmichael, and both, as well as a meal
     #             code "b", "l", or "d" for breakfast, lunch, and dinner
-    #             respectively.
+    #             respectively. Returns None if player chooses to go back.
     def get_hall_meal(self):
         halls = ["d", "c", "b"]
         meals = ["b", "l", "d"]
@@ -130,8 +137,10 @@ class My_Menu:
         while hall not in halls:
             print("Which dining hall would you like to search? " +
                   "Type \"d\" for Dewick, \"c\" for Carmichael, " +
-                  "or \"b\" for both.")
+                  "or \"b\" for both. Type \"back\" to go back.")
             hall = input().strip().lower()
+            if hall == "back":
+                return None
             if len(hall) > 0:
                 hall = hall[0]
             if hall not in halls:
@@ -141,14 +150,17 @@ class My_Menu:
         # Retrieve and verify input for meal time
         while meal not in meals:
             print("Which meal time would you like? Type \"b\" for " +
-                  "breakfast, \"l\" for lunch, or \"d\" for dinner.")
+                  "breakfast, \"l\" for lunch, or \"d\" for dinner. " +
+                  "Type \"back\" to go back.")
             meal = input().strip().lower()
+            if meal == "back":
+                return None
             if len(meal) > 0:
                 meal = meal[0]
             if meal not in meals:
                 print("Invalid command :(")
 
-        return Setting(hall, meal)
+        return setting.Setting(hall, meal)
 
     # Purpose:    Prints out the menus for a certain dining hall (or both)
     #             for a certain meal time.
@@ -156,18 +168,18 @@ class My_Menu:
     #             and a Setting instance giving the dining hall and meal time
     #             to print for.
     # Return:     Void
-    def print_meal(self, menu, setting):
+    def print_meal(self, menu, meal_setting):
         menus_to_print = []
         # First, decide which dining hall it is and what the meal time is.
-        if setting.hall == "c" or setting.hall == "b":
+        if meal_setting.hall == "c" or meal_setting.hall == "b":
             menus_to_print.append(menu.carm)
-        if setting.hall == "d" or setting.hall == "b":
+        if meal_setting.hall == "d" or meal_setting.hall == "b":
             menus_to_print.append(menu.dew)
-        if setting.meal == "b":
+        if meal_setting.meal == "b":
             meal_to_print = "Breakfast"
-        elif setting.meal == "l":
+        elif meal_setting.meal == "l":
             meal_to_print = "Lunch"
-        elif setting.meal == "d":
+        elif meal_setting.meal == "d":
             meal_to_print = "Dinner"
 
         # Print a meal time menu for all selected dining halls.
@@ -184,32 +196,3 @@ class My_Menu:
             for j in i["data"][meal_to_print]:
                 # Print the list of items
                 self.print_list(i["data"][meal_to_print][j], j)
-
-# The Day_Menu class holds menus for Dewick and Carmichael for a given date.
-class Day_Menu:
-
-    # Purpose:    Get menus for Dewick and Carmichael for a given date.
-    # Parameters: A datetime instance to give the day to check for.
-    # Return:     Void
-    def __init__(self, date):
-        # TODO: Day_Menu should not initially load both, and should only
-        #       load a hall when its data is requested by the user.
-        self.dew = req.get("https://tuftsdiningdata.herokuapp.com/menus/" + 
-                           "dewick/%d/%d/%d" %
-                           (date.day, date.month, date.year)).json()
-        self.carm = req.get("https://tuftsdiningdata.herokuapp.com/menus/" + 
-                            "carm/%d/%d/%d" %
-                            (date.day, date.month, date.year)).json()
-
-# The Setting class holds a dining hall code and a meal time code.
-class Setting:
-
-    # Purpose:    Create a Setting instance with a given dining hall code
-    #             and meal time code.
-    # Parameters: A dining hall code, which is a string that is "d" for
-    #             Dewick, "c" for Carmichael, or "b" for both, and a meal
-    #             time code, which is either "b" for breakfast, "l" for
-    #             lunch, or "d" for dinner.
-    def __init__(self, hall, meal):
-        self.hall = hall
-        self.meal = meal
