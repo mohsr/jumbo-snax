@@ -189,13 +189,15 @@ class My_Menu:
             elif i == menu.dew:
                 h_temp = "Dewick"
 
-            print("=========================================")
-            print("%s %s:" % (h_temp, meal_to_print.lower()))
-            print("=========================================")
-            
-            # TODO - Don't print if there's no breakfast that day!
-            
+            print("==========================================\n" +
+                  "%s %s:\n" % (h_temp, meal_to_print.lower()) +
+                  "==========================================")
+            # Check if that meal is offered today
+            if i["data"].get(meal_to_print) == None:
+                print("Sorry! There's no " + meal_to_print + " at " +
+                      h_temp + " today :(")
+                continue
             # Check for each item type
-            for j in i["data"][meal_to_print]:
+            for j in i["data"].get(meal_to_print):
                 # Print the list of items
                 self.print_list(i["data"][meal_to_print][j], j)
