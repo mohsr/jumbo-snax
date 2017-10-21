@@ -74,10 +74,13 @@ class My_Menu:
     # Purpose:    Print a list in an ~elegant~ manner.
     # Parameters: A list to print, and then an optional list name.
     # Return:     Void
-    def print_list(self, lst, lst_name = None):
+    def print_list(self, lst, lst_name = None, upper_name = False):
         # Print a list name if one is given.
         if lst_name != None:
-            print("%s: " % lst_name)
+            if upper_name:
+                print("%s: " % lst_name.upper())
+            else:
+                print("%s: " % lst_name)
         # Print the elements.
         for i in lst:
             print("    %s" % i)
@@ -200,4 +203,4 @@ class My_Menu:
             # Check for each item type
             for j in i["data"].get(meal_to_print):
                 # Print the list of items
-                self.print_list(i["data"][meal_to_print][j], j)
+                self.print_list(i["data"][meal_to_print][j], j, True)
