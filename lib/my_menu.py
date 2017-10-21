@@ -192,6 +192,9 @@ class My_Menu:
             print("=========================================")
             print("%s %s:" % (h_temp, meal_to_print.lower()))
             print("=========================================")
+            
+            # TODO - Don't print if there's no breakfast that day!
+            
             # Check for each item type
             for j in i["data"][meal_to_print]:
                 # Print the list of items
