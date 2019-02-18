@@ -38,7 +38,7 @@ class My_Menu:
         print("Welcome to jumbo-snax! Type \"help\" for a list of commands.")
         # TODO: The repl below is pretty rough, I should refine it.
         while (True):
-            entered = input().strip().lower()
+            entered = raw_input().strip().lower()
             if entered == "help":
                 self.print_dict(comms, "Commands")
             elif entered == "t":
@@ -141,7 +141,7 @@ class My_Menu:
             print("Which dining hall would you like to search? " +
                   "Type \"d\" for Dewick, \"c\" for Carmichael, " +
                   "or \"b\" for both. Type \"back\" to go back.")
-            hall = input().strip().lower()
+            hall = raw_input().strip().lower()
             if hall == "back":
                 return None
             if len(hall) > 0:
@@ -155,7 +155,7 @@ class My_Menu:
             print("Which meal time would you like? Type \"b\" for " +
                   "breakfast, \"l\" for lunch, or \"d\" for dinner. " +
                   "Type \"back\" to go back.")
-            meal = input().strip().lower()
+            meal = raw_input().strip().lower()
             if meal == "back":
                 return None
             if len(meal) > 0:
