@@ -7,10 +7,24 @@ Defines the My_Menu class.
 
 """
 import datetime as time
+import requests as req
 import sys
 
-import day_menu as day
-import setting
+# The Day_Menu class holds menus for Dewick and Carmichael for a given date.
+class Day_Menu:
+
+    # Purpose:    Get menus for Dewick and Carmichael for a given date.
+    # Parameters: A datetime instance to give the day to check for.
+    # Return:     Void
+    def __init__(self, date):
+        # TODO: Day_Menu should not initially load both, and should only
+        #       load a hall when its data is requested by the user.
+        self.dew = req.get("https://tuftsdiningdata.herokuapp.com/menus/" + 
+                           "dewick/%d/%d/%d" %
+                           (date.day, date.month, date.year)).json()
+        self.carm = req.get("https://tuftsdiningdata.herokuapp.com/menus/" + 
+                            "carm/%d/%d/%d" %
+                            (date.day, date.month, date.year)).json()
 
 # The My_Menu class is used to run the program.
 class My_Menu:
@@ -94,7 +108,7 @@ class My_Menu:
         #       getting the dining halls to search.
         if self.menu == None:
             print("Retrieving data...")
-            self.menu = day.Day_Menu(date)
+            self.menu = Day_Menu(date)
         meal_setting = self.get_hall_meal()
         if meal_setting == None:
             return
@@ -163,7 +177,7 @@ class My_Menu:
             if meal not in meals:
                 print("Invalid command :(")
 
-        return setting.Setting(hall, meal)
+        return Setting(hall, meal)
 
     # Purpose:    Prints out the menus for a certain dining hall (or both)
     #             for a certain meal time.
@@ -204,3 +218,21 @@ class My_Menu:
             for j in i["data"].get(meal_to_print):
                 # Print the list of items
                 self.print_list(i["data"][meal_to_print][j], j, True)
+
+
+# The Setting class holds a dining hall code and a meal time code.
+class Setting:
+
+    # Purpose:    Create a Setting instance with a given dining hall code
+    #             and meal time code.
+    # Parameters: A dining hall code, which is a string that is "d" for
+    #             Dewick, "c" for Carmichael, or "b" for both, and a meal
+    #             time code, which is either "b" for breakfast, "l" for
+    #             lunch, or "d" for dinner.
+    def __init__(self, hall, meal):
+        self.hall = hall
+        self.meal = meal
+
+# Run the program.
+if __name__ == "__main__":
+    menu = My_Menu()
